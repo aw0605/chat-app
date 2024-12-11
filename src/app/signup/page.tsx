@@ -6,7 +6,7 @@ import { auth, db } from "@/firebase/firebase";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
-const Signup = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -89,4 +89,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupPage;
