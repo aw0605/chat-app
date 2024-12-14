@@ -1,9 +1,6 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import SideBar from "@/components/SideBar";
-import TopBar from "@/components/TopBar";
-import BottomBar from "@/components/BottomBar";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "@/firebase/firebase";
 import { User } from "firebase/auth";
@@ -14,6 +11,12 @@ import {
 } from "react-firebase-hooks/firestore";
 import { CgSpinner } from "react-icons/cg";
 import { IoChatbubbleOutline } from "react-icons/io5";
+import SideBar from "@/components/SideBar";
+import TopBar from "@/components/TopBar";
+import BottomBar from "@/components/BottomBar";
+import MessageBubble from "@/components/MessageBubble";
+import { IMessage } from "@/types";
+import { useEffect, useRef } from "react";
 
 const ChatPage = () => {
   const { id } = useParams();
@@ -32,14 +35,20 @@ const ChatPage = () => {
     return users?.filter((user) => user.email !== currentUser?.email)[0];
   };
 
+  const bottomOfChat = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomOfChat.current?.scrollIntoView();
+  }, [messages]);
+
   return (
     <main className="grid w-full grid-cols-8">
       <div className="col-span-2">
         <SideBar selectedChatId={id as string} />
       </div>
       <div className="flex flex-col w-full col-span-6">
-        <TopBar user={getOtherUser(chat?.usersData, user as User)} />
-        <div className="flex w-full h-full px-6 pt-4 mb-2 overflow-y-scroll scrollbar-hide">
+        {chat && <TopBar user={getOtherUser(chat?.usersData, user as User)} />}
+        <div className="flex w-full h-full px-6 pt-4 mb-2 overflow-y-scroll max-h-[calc(100vh_-_70px_-_74px_-_10px)]">
           <div className="flex flex-col w-full h-full">
             {loading && (
               <div className="flex flex-col w-full h-full justify-center items-center">
@@ -55,6 +64,16 @@ const ChatPage = () => {
                 </p>
               </div>
             )}
+
+            {messages?.map((msg, idx) => (
+              <MessageBubble
+                key={idx}
+                user={user!}
+                message={msg as IMessage}
+                photoURL={msg.photoURL}
+              />
+            ))}
+            <div ref={bottomOfChat} className="py-8" />
           </div>
         </div>
         <BottomBar user={user as User} chatId={id as string} />

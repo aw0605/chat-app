@@ -1,7 +1,7 @@
 "use client";
 
-import { User } from "firebase/auth";
 import Image from "next/image";
+import { User } from "firebase/auth";
 
 interface ITopbarProps {
   user: User;
